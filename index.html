@@ -333,6 +333,7 @@ function toMin(t){const[h,m]=t.split(":").map(Number);return h*60+m}
 function hm(m){return Math.floor(m/60)+(m%60?":"+pad(m%60):"")}
 function fmtW(w){return hm(w[0])+"–"+hm(w[1])+"시"}
 function freeWindows(day){
+  if(!state.db)return [];
   let [a,b]=RANGES[avail.range]||RANGES.eve;
   const now=new Date(),t=ymd(now);
   if(day<t)return [];
@@ -634,7 +635,8 @@ setInterval(()=>{renderNext();renderMeet()},60000);
 
 (function boot(){
   if(!window.firebase||!CFG.firebase||!CFG.firebase.apiKey||!CFG.googleClientId){
-    setLive(false,"설정 필요");showBanner("<b>설정이 아직 안 됐어요</b> · config.js에 Firebase 설정과 구글 클라이언트 ID를 넣어야 해요.");return;
+    setLive(false,"설정 필요");f("loginBtn").disabled=true;f("loginBtn").textContent="구글 계정으로 로그인 (준비 중)";
+    gate("아직 달력 설정이 끝나지 않았어요. 지수님이 설정을 마치면 이 버튼으로 로그인할 수 있어요.");return;
   }
   firebase.initializeApp(CFG.firebase);
   const auth=firebase.auth(),db=firebase.firestore();
